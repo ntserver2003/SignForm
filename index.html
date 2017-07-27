@@ -1,0 +1,84 @@
+<!doctype html>
+<html class="no-js" lang="" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Load jsrscript -->
+        <!-- script src="js/vendor/jsrsasign-8.0.3/jsrsasign-all-min.js"></script -->
+        <script src="js/vendor/jsrsasign-8.0.3/ext/jsbn.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/rsa.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/prng4.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/rng.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/jsbn2.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/cryptojs-312-core-fix.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/cipher-core.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/md5.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/sha1.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/enc-base64.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/cj/tripledes.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/keyutil-1.0.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/crypto-1.1.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/asn1hex-1.1.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/base64x-1.1.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/yahoo.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/asn1-1.0.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/dsa-2.0.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/ecdsa-modified-1.0.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/asn1x509-1.0.js"></script>
+
+        <!-- Add your site or application content here -->
+        <form name="form1">
+            <label>Select key file:</label><input type="file" id="keyFile" name="keyFiles[]" />
+            <textarea name="prvkey1" id="prvKey1" rows="10" cols="65">
+-----BEGIN DSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,62E67F1AE440DEB8
+
+LN3BhXZmt0wSCMYpG1Vb2J41n0bNya3ILVLzdPbs5MbnukcMyDuQCqBN7Qa0pmCH
+DLy2zf7au/RkK2tOE6OhSAUibC3Jltnj1YLGHkHhTNxX0kmXAMBkft0ENb7PSfvx
+clMtAmOvZj6QaY/DYNIvsZN8pK2yftmh96Wlamyq1TeW5AlsbLQI+z4IB4H5pLyH
+aeYKjj4Dwaa5vf7abTQr/T6N2blpxsx3DyUqVeCa7B2kE+LfBgqg00TFwyGfzvyZ
+gxSjCiHwPH63N7puPmBUCRLFlBf+Nv8rTILOWDUg7avFEUtiTGI76XMMG8S/mFbh
+MAxqPtgBY4foOGclvgMmUQoNdmbWH6cWRYimaVIZZ142hyu05HHtsZ/UTlHnEd/R
+vVksQDpv5Ek27CoHzyFhos0X97pAm2bOFOJQADqh/C0LBUTfWxun1adlw/3szRul
+EBWiEp2GDOGJlTljP1DgMoyuyQtikg/66iH3e8br7HSf1Hz29RJ4m04CB7tqyqU4
+3ksWra5FW99XFrlOQlhvL7jtkb2vqkHP7bCZ4XfxQE3TSSShvu77bihJ8W+9mOMh
+OSv5KiMkqDWCi5Q7LxZtVA==
+-----END DSA PRIVATE KEY-----</textarea>
+            <br>
+            <label>Password:</label><input name="pwd" type="password" value="123456"/>
+            <input type="button" value="Sign to this message &darr;" onClick="doSign();"/>
+        </form>
+        <!-- script src="https://code.jquery.com/jquery-1.12.0.min.js"></script -->
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/sign.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <!-- script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='https://www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+        </script -->
+    </body>
+</html>
