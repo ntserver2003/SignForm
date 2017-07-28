@@ -6,7 +6,7 @@
                 alert('The File APIs are not fully supported in this browser.');
             }
             $(document).ready(function () {
-                $("#keyFile").change(handleFileSelect);
+                $("#signPEMFile").change(handleFileSelect);
             });
             function handleFileSelect(evt) {
                 var file = evt.target.files[0];
@@ -14,12 +14,11 @@
                 if ((typeof file !== "undefined" )
                     && (typeof file.name === "string" || file.name instanceof String)) {
                     console.debug("File select:" + file.name);
-                    readFile(file.name);
+                    readFile(file);
                 } else
                 {
                     console.debug("File not selected.");
                     setKeyValue(null);
-                    return;
                 }
             }
             function readFile(file) {
@@ -27,8 +26,8 @@
                 reader.onload = (function (_file) {
                     return function (_e) {
                         readComplete(_e.target.result);
-                    }
-                })
+                    };
+                })(file);
 
                 reader.readAsText(file);
             }
@@ -40,33 +39,79 @@
 
             function setKeyValue(keyData)
             {
-                $("#prvKey1").val(keyData);
+                $("#signPrivateKey").val(keyData);
+                var signBlock = $("#signBlock");
+                if(keyData === null)
+                {
+                    signBlock.hide();
+                }else{
+                    signBlock.show();
+                }
+
+            }
+            function getKeyValue() {
+                return $("#signPrivateKey").val();
+            }
+            function getSignString() {
+                return $("#signString").val();
+            }
+            function setSignatureString(sigVal) {
+                $("#signSignature").text(sigVal);
+            }
+            function getSignatureString(sigVal) {
+                return $("#signSignature").text();
             }
             // Sign data
             function doSign() {
-                var pemKey = document.form1.prvkey1.value;
-                var pwd = document.form1.pwd.value;
-                console.debug("pemkey = " + pemKey.toString().slice(1, 50));
-                var key = KEYUTIL.getKey( pemKey, pwd);
-                /*console.table(pemKey);
-                console.table(key);*/
-                var sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
-                sig.init(key, pwd);
-                sig.updateString('aaa');
-                var hSigVal = sig.sign();
+                var pwd = $("#signPassword").val();
+                var pemKey = getKeyValue();
+                console.debug("pemkey = " + pemKey.toString().slice(1, 120) + "...[sliced]");
+                var key = null;
+                try {
+                    key = KEYUTIL.getKey(pemKey, pwd);
+                }catch (e){}
 
-                console.debug("Signature: " + hSigVal);
-                /*var rsa = new RSAKey();
-                rsa.readPrivateKeyFromPEMString(document.form1.prvkey1.value);
-                var hashAlg = document.form1.hashalg.value;
-                var hSig = rsa.signString(document.form1.msgsigned.value, hashAlg);
-                document.form1.siggenerated.value = linebrk(hSig, 64);*/
+                if (key !== null) {
+                    /*console.table(pemKey);
+                     console.table(key);*/
+                    var sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
+                    sig.init(key, pwd);
+                    var sigString = getSignString();
+                    console.debug("Sign string:" + sigString);
+                    sig.updateString(sigString);
+                    var hSigVal = sig.sign();
+
+                    console.debug("Signature: " + hSigVal);
+                    setSignatureString(hSigVal);
+                } else
+                {
+                    var msgError = "Invalid private key or password. Try again";
+                    alert(msgError);
+                    setSignatureString(msgError);
+                }
             }
-            // initialize
-            //var sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
-            // initialize for signature generation
-            //sig.init(rsaPrivateKey);   // rsaPrivateKey of RSAKey object
-            // update data
-            //sig.updateString('aaa')
-            // calculate signature
-            //var sigValueHex = sig.sign()
+            // verify data
+            function doVerify() {
+                var pemKey = getKeyValue();
+                var key = null;
+                try {
+                    key = KEYUTIL.getKey(pemKey);
+                    /*console.table(pemKey);
+                     console.table(key);*/
+                    var sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
+                    sig.init(key);
+                    var sigString = getSignString();
+                    console.debug("Sign string:" + sigString);
+                    sig.updateString(sigString);
+                    var hSigVal = getSignatureString();
+
+                    console.debug("Signature: " + hSigVal);
+                    var isValid = sig.verify(hSigVal);
+                    var isValidMsg ="Signature valid:" + isValid.toString()
+                    console.debug(isValidMsg);
+                    $("#signIsValid").text(isValidMsg);
+                }catch (e){
+                    console.error(e.toString());
+                    $("#signIsValid").text("Error checking signature.");
+                }
+            }

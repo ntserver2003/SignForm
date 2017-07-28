@@ -41,11 +41,18 @@
         <script src="js/vendor/jsrsasign-8.0.3/src/dsa-2.0.js"></script>
         <script src="js/vendor/jsrsasign-8.0.3/src/ecdsa-modified-1.0.js"></script>
         <script src="js/vendor/jsrsasign-8.0.3/src/asn1x509-1.0.js"></script>
+        <!-- for signature check -->
+        <script src="js/vendor/jsrsasign-8.0.3/src/x509-1.1.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/ext/base64.js"></script>
+        <script src="js/vendor/jsrsasign-8.0.3/src/asn1hex-1.1.js"></script>
 
         <!-- Add your site or application content here -->
         <form name="form1">
-            <label>Select key file:</label><input type="file" id="keyFile" name="keyFiles[]" />
-            <textarea name="prvkey1" id="prvKey1" rows="10" cols="65">
+            <div><label for="signString">Enter text for sign:</label><textarea id="signString" rows="5" cols="65"></textarea></div>
+            <div><label for="signPEMFile">Select key file:</label><input type="file" id="signPEMFile" name="signPEMFile"/></div>
+            <div id="signBlock" hidden>
+                <div>
+                <textarea name="signPrivateKey" id="signPrivateKey" rows="10" cols="65">
 -----BEGIN DSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
 DEK-Info: DES-EDE3-CBC,62E67F1AE440DEB8
@@ -60,10 +67,13 @@ vVksQDpv5Ek27CoHzyFhos0X97pAm2bOFOJQADqh/C0LBUTfWxun1adlw/3szRul
 EBWiEp2GDOGJlTljP1DgMoyuyQtikg/66iH3e8br7HSf1Hz29RJ4m04CB7tqyqU4
 3ksWra5FW99XFrlOQlhvL7jtkb2vqkHP7bCZ4XfxQE3TSSShvu77bihJ8W+9mOMh
 OSv5KiMkqDWCi5Q7LxZtVA==
------END DSA PRIVATE KEY-----</textarea>
-            <br>
-            <label>Password:</label><input name="pwd" type="password" value="123456"/>
-            <input type="button" value="Sign to this message &darr;" onClick="doSign();"/>
+-----END DSA PRIVATE KEY-----</textarea></div>
+                <div><label for="signPassword">Password:</label><input name="signPassword" id="signPassword" type="password" value="123456"/></div>
+                <div><input type="button" value="Sign to this message &darr;" onClick="doSign();"/></div>
+            </div>
+            <label for="signSignature">Signature:</label> <div id="signSignature"></div>
+            <div><input type="button" value="Check Signature" onclick="doVerify();"/></div>
+            <label for="signIsValid">Signature verify result:</label><div id="signIsValid"></div>
         </form>
         <!-- script src="https://code.jquery.com/jquery-1.12.0.min.js"></script -->
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
