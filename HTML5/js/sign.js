@@ -14,10 +14,12 @@
                 if ((typeof file !== "undefined" )
                     && (typeof file.name === "string" || file.name instanceof String)) {
                     console.debug("File select:" + file.name);
+                    $("#signFileName").text("Selected file: " + file.name);
                     readFile(file);
                 } else
                 {
                     console.debug("File not selected.");
+                    $("#signFileName").text("File not selected");
                     setKeyValue(null);
                 }
             }
@@ -55,43 +57,71 @@
             function getSignString() {
                 return $("#signString").val();
             }
-            function setSignatureString(sigVal) {
-                $("#signSignature").text(sigVal);
+            function setSignatureString(sigVal, err) {
+                var sel = $("#signSignature");
+                sel.text(sigVal);
+                if (err === true)
+                {
+                    state = "ui-state-error";
+                    icon = "ui-icon ui-icon-alert";
+                } else {
+                    state = "ui-state-highlight";
+                    icon = "ui-icon ui-icon-info";
+                }
+                $("#signSignatureBlock").attr("class", state);
+                $("#signSignatureIcon").attr("class", icon);
+
             }
-            function getSignatureString(sigVal) {
+            function getSignatureString() {
                 return $("#signSignature").text();
             }
-            // Sign data
-            function doSign() {
-                var pwd = $("#signPassword").val();
-                var pemKey = getKeyValue();
-                console.debug("pemkey = " + pemKey.toString().slice(1, 120) + "...[sliced]");
-                var key = null;
-                try {
-                    key = KEYUTIL.getKey(pemKey, pwd);
-                }catch (e){}
+            
+            function setSignatureIsValid(msg, err) {
+                var state, icon;
+                var sel = $("#signIsValid");
+                sel.text(msg);
+                if (err === true)
+                {
+                    state = "ui-state-error";
+                    icon = "ui-icon ui-icon-alert";
+                } else {
+                    state = "ui-state-highlight";
+                    icon = "ui-icon ui-icon-info";
+                }
+                $("#signIsValidBlock").attr("class", state);
+                $("#signIsValidIcon").attr("class", icon);
+            }
 
-                if (key !== null) {
-                    /*console.table(pemKey);
-                     console.table(key);*/
-                    var sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
+            // Sign data
+            function doSign(evt) {
+                evt.preventDefault();
+                var pwd, pemKey, key;
+                pwd = $("#signPassword").val();
+                pemKey = getKeyValue();
+                console.debug("pemkey = " + pemKey.toString().slice(1, 120) + "...[sliced]");
+                try {
+                    var sig, sigString, hSigVal;
+                    key = KEYUTIL.getKey(pemKey, pwd);
+                    sig = new KJUR.crypto.Signature({"alg": "SHA1withDSA"});
                     sig.init(key, pwd);
-                    var sigString = getSignString();
+                    sigString = getSignString();
                     console.debug("Sign string:" + sigString);
                     sig.updateString(sigString);
-                    var hSigVal = sig.sign();
+                    hSigVal = sig.sign();
 
                     console.debug("Signature: " + hSigVal);
                     setSignatureString(hSigVal);
-                } else
-                {
+                }catch (e){
                     var msgError = "Invalid private key or password. Try again";
-                    alert(msgError);
-                    setSignatureString(msgError);
+                    console.error(e.toString());
+                    setSignatureString(msgError, true);
+                    $( "#signBlock" ).effect( "shake", {"distance": 5} );
                 }
+
             }
             // verify data
-            function doVerify() {
+            function doVerify(evt) {
+                evt.preventDefault();
                 var pemKey = getKeyValue();
                 var key = null;
                 try {
@@ -107,11 +137,13 @@
 
                     console.debug("Signature: " + hSigVal);
                     var isValid = sig.verify(hSigVal);
-                    var isValidMsg ="Signature valid:" + isValid.toString()
+                    var isValidMsg ="Signature valid:" + isValid.toString();
                     console.debug(isValidMsg);
-                    $("#signIsValid").text(isValidMsg);
+                    setSignatureIsValid(isValidMsg, isValid !== true);
                 }catch (e){
                     console.error(e.toString());
-                    $("#signIsValid").text("Error checking signature.");
+                    setSignatureIsValid("Error checking signature.", true);
+                    $( "#signButtonBlock" ).effect( "shake", {"distance": 5} );
                 }
+
             }

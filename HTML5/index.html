@@ -13,6 +13,53 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+
+        <!-- Style -->
+        <link href="css\jquery-ui.css" rel="stylesheet">
+        <style>
+            body{
+                font-family: "Trebuchet MS", sans-serif;
+                margin: 50px;
+            }
+            .demoHeaders {
+                margin-top: 2em;
+            }
+            #dialog-link {
+                padding: .4em 1em .4em 20px;
+                text-decoration: none;
+                position: relative;
+            }
+            #dialog-link span.ui-icon {
+                margin: 0 5px 0 0;
+                position: absolute;
+                left: .2em;
+                top: 50%;
+                margin-top: -8px;
+            }
+            #icons {
+                margin: 0;
+                padding: 0;
+            }
+            #icons li {
+                margin: 2px;
+                position: relative;
+                padding: 4px 0;
+                cursor: pointer;
+                float: left;
+                list-style: none;
+            }
+            #icons span.ui-icon {
+                float: left;
+                margin: 0 4px;
+            }
+            .fakewindowcontain .ui-widget-overlay {
+                position: absolute;
+            }
+            select {
+                width: 200px;
+            }
+        </style>
+
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -47,36 +94,60 @@
         <script src="js/vendor/jsrsasign-8.0.3/src/asn1hex-1.1.js"></script>
 
         <!-- Add your site or application content here -->
-        <form name="form1">
-            <div><label for="signString">Enter text for sign:</label><textarea id="signString" rows="5" cols="65"></textarea></div>
-            <div><label for="signPEMFile">Select key file:</label><input type="file" id="signPEMFile" name="signPEMFile"/></div>
-            <div id="signBlock" hidden>
-                <div>
-                <textarea name="signPrivateKey" id="signPrivateKey" rows="10" cols="65">
------BEGIN DSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-EDE3-CBC,62E67F1AE440DEB8
+        <div class="ui-widget">
+            <form name="form1">
+                <div><label for="signString">Enter text for sign:</label><textarea id="signString" rows="5" cols="65"></textarea></div>
+                <div><label for="signPEMFile">Select key file:</label>
+                    <button id="signButtonIcon" onclick="event.preventDefault();$('#signPEMFile').click();">File</button>
+                    <input style="display:none" type="file" id="signPEMFile" name="signPEMFile"/>
+                    <span id="signFileName">File not selected</span>
+                </div>
+                <div id="signBlock" hidden>
+                    <div>
+                        <textarea name="signPrivateKey" id="signPrivateKey" rows="10" cols="65">
+    -----BEGIN DSA PRIVATE KEY-----
+    Proc-Type: 4,ENCRYPTED
+    DEK-Info: DES-EDE3-CBC,62E67F1AE440DEB8
 
-LN3BhXZmt0wSCMYpG1Vb2J41n0bNya3ILVLzdPbs5MbnukcMyDuQCqBN7Qa0pmCH
-DLy2zf7au/RkK2tOE6OhSAUibC3Jltnj1YLGHkHhTNxX0kmXAMBkft0ENb7PSfvx
-clMtAmOvZj6QaY/DYNIvsZN8pK2yftmh96Wlamyq1TeW5AlsbLQI+z4IB4H5pLyH
-aeYKjj4Dwaa5vf7abTQr/T6N2blpxsx3DyUqVeCa7B2kE+LfBgqg00TFwyGfzvyZ
-gxSjCiHwPH63N7puPmBUCRLFlBf+Nv8rTILOWDUg7avFEUtiTGI76XMMG8S/mFbh
-MAxqPtgBY4foOGclvgMmUQoNdmbWH6cWRYimaVIZZ142hyu05HHtsZ/UTlHnEd/R
-vVksQDpv5Ek27CoHzyFhos0X97pAm2bOFOJQADqh/C0LBUTfWxun1adlw/3szRul
-EBWiEp2GDOGJlTljP1DgMoyuyQtikg/66iH3e8br7HSf1Hz29RJ4m04CB7tqyqU4
-3ksWra5FW99XFrlOQlhvL7jtkb2vqkHP7bCZ4XfxQE3TSSShvu77bihJ8W+9mOMh
-OSv5KiMkqDWCi5Q7LxZtVA==
------END DSA PRIVATE KEY-----</textarea></div>
-                <div><label for="signPassword">Password:</label><input name="signPassword" id="signPassword" type="password" value="123456"/></div>
-                <div><input type="button" value="Sign to this message &darr;" onClick="doSign();"/></div>
-            </div>
-            <label for="signSignature">Signature:</label> <div id="signSignature"></div>
-            <div><input type="button" value="Check Signature" onclick="doVerify();"/></div>
-            <label for="signIsValid">Signature verify result:</label><div id="signIsValid"></div>
-        </form>
+    LN3BhXZmt0wSCMYpG1Vb2J41n0bNya3ILVLzdPbs5MbnukcMyDuQCqBN7Qa0pmCH
+    DLy2zf7au/RkK2tOE6OhSAUibC3Jltnj1YLGHkHhTNxX0kmXAMBkft0ENb7PSfvx
+    clMtAmOvZj6QaY/DYNIvsZN8pK2yftmh96Wlamyq1TeW5AlsbLQI+z4IB4H5pLyH
+    aeYKjj4Dwaa5vf7abTQr/T6N2blpxsx3DyUqVeCa7B2kE+LfBgqg00TFwyGfzvyZ
+    gxSjCiHwPH63N7puPmBUCRLFlBf+Nv8rTILOWDUg7avFEUtiTGI76XMMG8S/mFbh
+    MAxqPtgBY4foOGclvgMmUQoNdmbWH6cWRYimaVIZZ142hyu05HHtsZ/UTlHnEd/R
+    vVksQDpv5Ek27CoHzyFhos0X97pAm2bOFOJQADqh/C0LBUTfWxun1adlw/3szRul
+    EBWiEp2GDOGJlTljP1DgMoyuyQtikg/66iH3e8br7HSf1Hz29RJ4m04CB7tqyqU4
+    3ksWra5FW99XFrlOQlhvL7jtkb2vqkHP7bCZ4XfxQE3TSSShvu77bihJ8W+9mOMh
+    OSv5KiMkqDWCi5Q7LxZtVA==
+    -----END DSA PRIVATE KEY-----</textarea>
+                    </div>
+                    <div><label for="signPassword">Password:</label><input name="signPassword" id="signPassword" type="password" value="123456"/></div>
+                    <div>
+                        <button class="signButton" onClick="doSign(event);">Sign to this message &darr;</button>
+                        <label for="signSignature">Signature:</label>
+                        <span id = "signSignatureBlock" class="ui-corner-all">
+                            <span id="signSignatureIcon" style="margin-right: .3em;"></span>
+                            <span id="signSignature"></span>
+                        </span>
+                    </div>
+                </div>
+                <div id="signButtonBlock">
+                    <button class="signButton" onclick="doVerify(event);">Check Signature</button>
+                    <br>
+                    <label for="signIsValid">Signature verify result:</label>
+                    <span id="signIsValidBlock" class="ui-corner-all">
+                        <span id="signIsValidIcon" style="margin-right: .3em;"></span>
+                        <span id="signIsValid"></span>
+                    </span>
+                </div>
+            </form>
+        </div>
         <!-- script src="https://code.jquery.com/jquery-1.12.0.min.js"></script -->
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <!-- UI -->
+        <script src="js/vendor/jquery-ui/jquery-ui.js"></script>
+
+        <!-- Main scripts -->
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
         <script src="js/sign.js"></script>
