@@ -107,7 +107,7 @@
                     sigString = getSignString();
                     console.debug("Sign string:" + sigString);
                     sig.updateString(sigString);
-                    hSigVal = sig.sign();
+                    hSigVal = hex2b64(sig.sign());
 
                     console.debug("Signature: " + hSigVal);
                     setSignatureString(hSigVal);
@@ -136,7 +136,7 @@
                     var hSigVal = getSignatureString();
 
                     console.debug("Signature: " + hSigVal);
-                    var isValid = sig.verify(hSigVal);
+                    var isValid = sig.verify(b64tohex(hSigVal));
                     var isValidMsg ="Signature valid:" + isValid.toString();
                     console.debug(isValidMsg);
                     setSignatureIsValid(isValidMsg, isValid !== true);
