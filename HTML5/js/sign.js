@@ -107,9 +107,11 @@
                     sigString = getSignString();
                     console.debug("Sign string:" + sigString);
                     sig.updateString(sigString);
-                    hSigVal = hex2b64(sig.sign());
 
-                    console.debug("Signature: " + hSigVal);
+                    hSigVal = sig.sign();
+                    console.debug("Signature hexstring: " + hSigVal);
+                    hSigVal = hex2b64(hSigVal);
+                    console.debug("Signature b64: " + hSigVal);
                     setSignatureString(hSigVal);
                 }catch (e){
                     var msgError = "Invalid private key or password. Try again";
@@ -135,8 +137,10 @@
                     sig.updateString(sigString);
                     var hSigVal = getSignatureString();
 
-                    console.debug("Signature: " + hSigVal);
-                    var isValid = sig.verify(b64tohex(hSigVal));
+                    console.debug("Signature base64: " + hSigVal);
+                    hSigVal = b64tohex(hSigVal);
+                    console.debug("Signature hexstring: " + hSigVal);
+                    var isValid = sig.verify(hSigVal);
                     var isValidMsg ="Signature valid:" + isValid.toString();
                     console.debug(isValidMsg);
                     setSignatureIsValid(isValidMsg, isValid !== true);
